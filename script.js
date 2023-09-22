@@ -1,7 +1,8 @@
 const { ECSClient, ListTasksCommand, DescribeTasksCommand, DescribeTaskDefinitionCommand, RegisterTaskDefinitionCommand, UpdateServiceCommand } = require("@aws-sdk/client-ecs");
 
-const CLUSTER_NAME = 'my-ecs-cluster-rcnaggce';
-const REGION = 'us-east-1';
+const CLUSTER_NAME = 'CLUSTER_NAME_HERE';
+const REGION = 'REGION_HERE';
+const STACK_NAME = 'STACK NAME HERE';
 
 const ecs = new ECSClient({ region: REGION }); 
 
@@ -39,7 +40,7 @@ async function removeJokerSidecar(taskDefinitionArn) {
 
   // Check if the task definition has a "joker" sidecar
   taskDefinition.containerDefinitions = taskDefinition.containerDefinitions.filter(
-    (container) => container.name !== 'side-car-ProtectOnce-Agentless-Monitor-script'
+    (container) => container.name !== `side-car-${STACK_NAME}`
   );
 
   // Register the updated task definition
