@@ -2,8 +2,7 @@ const { ECSClient, ListTasksCommand, DescribeTasksCommand, DescribeTaskDefinitio
 
 const CLUSTER_NAME = 'CLUSTER_NAME_HERE';
 const REGION = 'REGION_HERE';
-const STACK_NAME = 'STACK NAME HERE';
-
+const STACK_NAME = 'STACK_NAME_HERE'
 const ecs = new ECSClient({ region: REGION }); 
 
 
@@ -28,7 +27,7 @@ async function listTasks(clusterName) {
 }
 
 
-async function removeJokerSidecar(taskDefinitionArn) {
+async function removeSidecar(taskDefinitionArn) {
   const params = {
     taskDefinition: taskDefinitionArn,
   };
@@ -38,7 +37,7 @@ async function removeJokerSidecar(taskDefinitionArn) {
 
   const taskDefinition = response.taskDefinition;
 
-  // Check if the task definition has a "joker" sidecar
+  // Check if the task definition has a sidecar
   taskDefinition.containerDefinitions = taskDefinition.containerDefinitions.filter(
     (container) => container.name !== `side-car-${STACK_NAME}`
   );
@@ -80,8 +79,8 @@ async function main() {
     const task = taskResponse.tasks[0];
     const taskDefinitionArn = task.taskDefinitionArn;
     console.log("taskARn:",taskDefinitionArn);
-    // Remove "joker" sidecar from the task definition
-    const newTaskDefinitionArn = await removeJokerSidecar(taskDefinitionArn);
+    // Remove sidecar from the task definition
+    const newTaskDefinitionArn = await removeSidecar(taskDefinitionArn);
 
     // Update the task with the new task definition
     const updateServiceParams = {
@@ -93,7 +92,7 @@ async function main() {
     const updateServiceCommand = new UpdateServiceCommand(updateServiceParams);
     await ecs.send(updateServiceCommand);
 
-    console.log(`Removed 'joker' sidecar from task: ${taskArn}`);
+    console.log(`Removed sidecar from task: ${taskArn}`);
   }
 }
 
